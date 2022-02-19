@@ -80,8 +80,7 @@ function parse(content) {
 				}
 			} else if (key == "grand_company") {
 				const values = value.content.split(" / ");
-				key = null;
-				data.grand_company = {
+				value = {
 					name: values[0],
 					rank: values[1]
 				};
@@ -108,9 +107,6 @@ function parse(content) {
 			if (key !== null)
 				data[key] = value;
 		}
-		/*const key = infoBox.children[0].content,
-			value = infoBox.children[1].content.replace(/<br \/>/g, " / ");
-		data[key] = value;*/
 	}
 
 	// Return
