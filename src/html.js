@@ -5,17 +5,27 @@ const tagRegex = /<(.*?)>/g,
 
 // Parse HTMl elements into JSON
 
-function _recurse(elements, _fallback) {
+function _recurse(elements, _fallback, _content = "") {
 	const first = elements.splice(0, 1)[0];
+	
+	let close = false;
+	if (first) {
+		close = first.tagRaw.startsWith("</");
+		if (_fallback) {
+			_fallback.content = _content.slice(_fallback._end, first._index);
+		}
+	}
 
-	if (!first || first.tagRaw.startsWith("</") || first.tag == "br")
+	if (!first || close || first.tag == "br" || first.tag == "input")
 		return _fallback || null;
 
 	while (elements.length > 0) {
 		const second = elements.splice(0, 1)[0];
-		if (first.tagRaw.startsWith("<input") || second.tagRaw.startsWith("</"))
+		if (second.tagRaw.startsWith("</")) {
+			first.content = _content.slice(first._end, second._index);
 			break;
-		first.children.push(_recurse(elements, second));
+		}
+		first.children.push(_recurse(elements, second, _content));
 	}
 	
 	return first;
@@ -35,12 +45,6 @@ function parseHtml(content) {
 		if (tag == "br")
 			continue;
 		
-		let innerText = null;
-		if (tag != "input") {
-			const start = exec.index + tagRaw.length;
-			innerText = content.slice(start, start);
-		}
-		
 		while ((propExec = propRegex.exec(tagRaw)) !== null) {
 			const key = propExec[1],
 				value = propExec[2];
@@ -50,9 +54,10 @@ function parseHtml(content) {
 		_elements.push(Object.assign({
 			tag,
 			tagRaw,
-			content: innerText,
+			content: null,
 			children: [],
-			_index: exec.index
+			_index: exec.index,
+			_end: exec.index + tagRaw.length
 		}, properties));
 	}
 
@@ -61,8 +66,8 @@ function parseHtml(content) {
 	const result = [];
 
 	while (_elements.length > 0) {
-		const element = _recurse(_elements);
-		//if (element != null)
+		const element = _recurse(_elements, null, content);
+		if (element != null)
 			result.push(element);
 	}
 

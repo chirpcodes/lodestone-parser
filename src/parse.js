@@ -22,7 +22,7 @@ function _charData(content) {
 // Parse character
 
 function parse(content) {
-	return JSON.stringify(_charData(content), null, 4);
+	return _charData(content);
 }
 
 // Export
