@@ -63,10 +63,10 @@ function parse(content) {
 			continue;
 		
 		for (let i = 0; i<values.length; i+=2) {
-			let key = values[i].content,
+			let key = values[i].content.toLowerCase().replace(/[\s-]/g, "_"),
 				value = values[i+1];
 			
-			if (key == "Free Company") {
+			if (key == "free_company") {
 				const crest = scrape[_toScrape.fcCrest][0].children.map(_=>_.src);
 
 				value = {
@@ -78,10 +78,35 @@ function parse(content) {
 						icon: crest[2]
 					}
 				}
+			} else if (key == "grand_company") {
+				const values = value.content.split(" / ");
+				key = null;
+				data.grand_company = {
+					name: values[0],
+					rank: values[1]
+				};
 			} else {
 				value = value.content.replace(/<br \/>/g, " / ");
+
+				if (key.includes("/")) {
+					const keys = key.split("/"),
+						values = value.split(" / ");
+					key = null;
+					for (let i = 0; i<keys.length; i++) {
+						let val = values[i];
+						
+						if (val == "♀")
+							val = "Female";
+						else if (val == "♂")
+							val = "Male";
+
+						data[keys[i]] = val;
+					}
+				}
 			}
-			data[key] = value;
+
+			if (key !== null)
+				data[key] = value;
 		}
 		/*const key = infoBox.children[0].content,
 			value = infoBox.children[1].content.replace(/<br \/>/g, " / ");
