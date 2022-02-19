@@ -37,8 +37,11 @@ function parseHtml(content) {
 
 	let exec;
 	while ((exec = tagRegex.exec(content)) !== null) {
+		const tagRaw = exec[0];
+
 		elements.push({
-			tagRaw: exec[0],
+			tagRaw,
+			tag: tagRaw.slice(1, Math.min(tagRaw.indexOf(" "), tagRaw.indexOf(">"))),
 			index: exec.index,
 			children: []
 		});
