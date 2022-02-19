@@ -1,6 +1,7 @@
 // Global
 
-const tagRegex = /<(.*?)>/g;
+const tagRegex = /<(.*?)>/g,
+	propRegex = /([-A-z]*?)="(.*?)"/g
 
 // Parse HTMl elements into JSON
 
@@ -20,36 +21,49 @@ function _recurse(elements, _fallback) {
 	return first;
 }
 
-function _parseElements(elements) {
-	const list = [];
-
-	while (elements.length > 0) {
-		const element = _recurse(elements);
-		if (element != null)
-			list.push(element);
-	}
-
-	return list;
-}
-
 function parseHtml(content) {
-	const elements = [];
+	// Parse text
 
-	let exec;
+	const _elements = [];
+
+	let exec, propExec;
 	while ((exec = tagRegex.exec(content)) !== null) {
-		const tagRaw = exec[0];
+		const tagRaw = exec[0],
+			tag = tagRaw.slice(1, Math.min(tagRaw.indexOf(" "), tagRaw.indexOf(">"))),
+			properties = {};
+		
+		let innerText = null;
+		if (tag != "input") {
+			const start = exec.index + tagRaw.length;
+			innerText = content.slice(start, start);
+		}
+		
+		while ((propExec = propRegex.exec(tagRaw)) !== null) {
+			const key = propExec[1],
+				value = propExec[2];
+			properties[key] = value;
+		}
 
-		elements.push({
+		_elements.push(Object.assign({
+			tag,
 			tagRaw,
-			tag: tagRaw.slice(1, Math.min(tagRaw.indexOf(" "), tagRaw.indexOf(">"))),
-			index: exec.index,
-			children: []
-		});
+			content: innerText,
+			children: [],
+			_index: exec.index
+		}, properties));
 	}
 
-	const res = JSON.stringify(_parseElements(elements), null, 4);
+	// Result
 
-	return res;
+	const result = [];
+
+	while (_elements.length > 0) {
+		const element = _recurse(_elements);
+		if (element != null)
+			result.push(element);
+	}
+
+	return result;
 }
 
 // Export
