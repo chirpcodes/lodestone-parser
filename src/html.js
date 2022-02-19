@@ -8,7 +8,7 @@ const tagRegex = /<(.*?)>/g,
 function _recurse(elements, _fallback) {
 	const first = elements.splice(0, 1)[0];
 
-	if (!first || first.tagRaw.startsWith("</"))
+	if (!first || first.tagRaw.startsWith("</") || first.tag == "br")
 		return _fallback || null;
 
 	while (elements.length > 0) {
@@ -31,6 +31,9 @@ function parseHtml(content) {
 		const tagRaw = exec[0],
 			tag = tagRaw.slice(1, Math.min(tagRaw.indexOf(" "), tagRaw.indexOf(">"))),
 			properties = {};
+		
+		if (tag == "br")
+			continue;
 		
 		let innerText = null;
 		if (tag != "input") {
@@ -59,7 +62,7 @@ function parseHtml(content) {
 
 	while (_elements.length > 0) {
 		const element = _recurse(_elements);
-		if (element != null)
+		//if (element != null)
 			result.push(element);
 	}
 
