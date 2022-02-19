@@ -1,0 +1,12 @@
+{
+	"name": "lodestone-parser",
+	"version": "0.1.0",
+	"description": "Parser for character profiles from lodestone.",
+	"author": "chirp (https://github.com/chrpy)",
+	"url": "https://github.com/chrpy/lodestone-parser",
+	"repository": "github:chrpy/lodestone-parser",
+	"main": "./src/index.js",
+	"scripts": {
+		"start": "node src/main"
+	}
+}
