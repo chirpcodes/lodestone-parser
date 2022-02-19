@@ -1,7 +1,9 @@
 // Global
 
 const tagRegex = /<(.*?)>/g,
-	propRegex = /([-A-z]*?)="(.*?)"/g
+	propRegex = /([-A-z]*?)="(.*?)"/g;
+
+const _noClose = ["input", "img"];
 
 // Parse HTMl elements into JSON
 
@@ -16,7 +18,7 @@ function _recurse(elements, _fallback, _content = "") {
 		}
 	}
 
-	if (!first || close || first.tag == "br" || first.tag == "input")
+	if (!first || close || _noClose.includes(first.tag))
 		return _fallback || null;
 
 	while (elements.length > 0) {
@@ -50,6 +52,7 @@ function parseHtml(content) {
 				value = propExec[2];
 			properties[key] = value;
 		}
+		const classes = properties.class ? properties.class.split(" ") : [];
 
 		_elements.push(Object.assign({
 			tag,
@@ -57,8 +60,20 @@ function parseHtml(content) {
 			content: null,
 			children: [],
 			_index: exec.index,
-			_end: exec.index + tagRaw.length
+			_end: exec.index + tagRaw.length,
+			classes
 		}, properties));
+
+		if (_noClose.includes(tag)) {
+			_elements.push({
+				tag: tag,
+				tagRaw: `</${tag}>`,
+				children: [],
+				classes: [],
+				_index: exec.index,
+				_end: 0
+			});
+		}
 	}
 
 	// Result
