@@ -12,8 +12,6 @@ const _toScrape = {
 // Parse HTML
 
 function _charHtml(content) {
-	//return parseHtml(content);
-
 	const split = content.split("\n");
 
 	let found = false;
@@ -67,38 +65,23 @@ function scrapeTagName(tag, html) {
 function parse(content) {
 	const data = {};
 
-	const html = _charHtml(content)//,
-	//scrape = scrapeClasses(Object.values(_toScrape), html);
+	const html = _charHtml(content),
+	scrape = scrapeClasses(Object.values(_toScrape), html);
 
 	// Profile
 
-	/*for (const infoBox of [
-		...scrape[_toScrape.infoBox],
-		...scrape[_toScrape.infoBoxBlock]
-	]) {
+	for (const infoBox of scrape[_toScrape.infoBoxBlock]) {
 		const values = infoBox.children.filter(_=>_.tag != "img");
 		if (values.length < 2)
 			continue;
 		
-		//console.log(infoBox);
-		
-		/*for (let i = 0; i<values.length; i+=2) {
+		for (let i = 0; i<values.length; i+=2) {
 			let key = values[i].content.toLowerCase().replace(/[\s-]/g, "_"),
 				value = values[i+1];
-			
-			if (key == "free_company") {
-				const crest = scrape[_toScrape.fcCrest][0].children.map(_=>_.src);
 
-				value = {
-					name: value.content,
-					link: value.href,
-					crest: {
-						background: crest[0],
-						border: crest[1],
-						icon: crest[2]
-					}
-				}
-			} else if (key == "grand_company") {
+			console.log(key);
+			
+			if (key == "grand_company") {
 				const values = value.content.split(" / ");
 				value = {
 					name: values[0],
@@ -126,8 +109,10 @@ function parse(content) {
 
 			if (key !== null)
 				data[key] = value;
-		}*/
-	//}
+		}
+	}
+
+	// TODO: Free Company
 
 	// Job Levels
 
@@ -138,7 +123,7 @@ function parse(content) {
 
 	// Return
 
-	//console.log(data);
+	console.log(data);
 
 	return html;
 }
