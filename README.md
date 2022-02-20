@@ -5,10 +5,10 @@ Though this module is now in a working state, it is still incomplete.
 - [x] HTML parsing
 - [ ] Character name and world
 - [ ] Character portrait
+- [x] Character race, clan and gender
 - [ ] Equipped items
 - [ ] Minions and mounts
 - [ ] Profile text
-- [x] Character race, clan and gender
 - [x] Citystate
 - [x] Guardian
 - [x] Grand Company
