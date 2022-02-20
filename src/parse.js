@@ -12,6 +12,8 @@ const _toScrape = {
 // Parse HTML
 
 function _charHtml(content) {
+	//return parseHtml(content);
+
 	const split = content.split("\n");
 
 	let found = false;
@@ -65,12 +67,12 @@ function scrapeTagName(tag, html) {
 function parse(content) {
 	const data = {};
 
-	const html = _charHtml(content),
-	scrape = scrapeClasses(Object.values(_toScrape), html);
+	const html = _charHtml(content)//,
+	//scrape = scrapeClasses(Object.values(_toScrape), html);
 
 	// Profile
 
-	for (const infoBox of [
+	/*for (const infoBox of [
 		...scrape[_toScrape.infoBox],
 		...scrape[_toScrape.infoBoxBlock]
 	]) {
@@ -78,7 +80,9 @@ function parse(content) {
 		if (values.length < 2)
 			continue;
 		
-		for (let i = 0; i<values.length; i+=2) {
+		//console.log(infoBox);
+		
+		/*for (let i = 0; i<values.length; i+=2) {
 			let key = values[i].content.toLowerCase().replace(/[\s-]/g, "_"),
 				value = values[i+1];
 			
@@ -100,7 +104,7 @@ function parse(content) {
 					name: values[0],
 					rank: values[1]
 				};
-			} else {
+			} else if (value.content) {
 				value = value.content.replace(/<br \/>/g, " / ");
 
 				if (key.includes("/")) {
@@ -122,19 +126,19 @@ function parse(content) {
 
 			if (key !== null)
 				data[key] = value;
-		}
-	}
+		}*/
+	//}
 
 	// Job Levels
 
-	console.log(scrape[_toScrape.charLevels]);
-	for (const charLevels of scrapeTagName("li", scrape[_toScrape.charLevels])) {
-		console.log(charLevels[0]);
-	}
+	//console.log(scrape[_toScrape.charLevels]);
+	//for (const charLevels of scrapeTagName("li", scrape[_toScrape.charLevels])) {
+		//console.log(charLevels[0]);
+	//}
 
 	// Return
 
-	console.log(data);
+	//console.log(data);
 
 	return html;
 }

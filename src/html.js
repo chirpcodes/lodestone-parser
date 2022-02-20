@@ -7,27 +7,24 @@ const _noClose = ["input", "img"];
 
 // Parse HTMl elements into JSON
 
-let __i = 0;
-
-function _recurse(elements, _fallback, _content = "") {
+function _recurse(elements, content, _fallback) {
 	const first = elements.splice(0, 1)[0];
-	
-	let close = first && first.tag.startsWith("/");
-	if (close && _fallback) {
-		_fallback.content = _content.slice(_fallback._end, first._index);
-	}
-	if (!first || first.tag.startsWith("/"))
-		return _fallback || null;
+	if (!first) return null;
 
 	while (elements.length > 0) {
-		const second = elements.splice(0, 1)[0];
-		if (second.tagRaw.startsWith("</")) {
-			first.content = _content.slice(first._end, second._index);
+		const next = elements[0];
+
+		if (next.tag == `/${first.tag}`) {
+			elements.splice(0, 1);
+			first.content = content.slice(first._end, next._index);
 			break;
 		}
-		first.children.push(_recurse(elements, second, _content));
+
+		const child = _recurse(elements, content, next);
+		if (child)
+			first.children.push(child);
 	}
-	
+
 	return first;
 }
 
@@ -80,7 +77,7 @@ function parseHtml(content) {
 	const result = [];
 
 	while (_elements.length > 0) {
-		const element = _recurse(_elements, null, content);
+		const element = _recurse(_elements, content, null);
 		if (element != null)
 			result.push(element);
 	}
