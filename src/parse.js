@@ -16,20 +16,42 @@ const _toScrape = {
 // Parse HTML
 
 function _charHtml(content) {
+	const result = {
+		info: {},
+		html: null
+	};
+	
+	// Parse
+
 	const split = content.split("\n");
 
-	let found = false;
+	let found = false,
+		extCt = 0;
 	for (const index in split) {
 		let line = split[index];
+
+		if (extCt < 3) {
+			for (const ext of ["name", "title", "world"]) {
+				if (!result[ext] && line.includes(`chara__${ext}`)) {
+					result.info[ext] = parseHtml(line).shift();
+					extCt++;
+				}
+			}
+		}
+
 		if (found) {
 			if (line.startsWith("<div")) {
-				line = line.replace(/&#([0-9]{1,});/g, (_,c)=>String.fromCharCode(c));
-				return parseHtml(line);
+				result.html = parseHtml(line);
+				break;
 			}
 		} else if (line.includes("character__content selected")) {
 			found = true;
 		}
 	}
+
+	// Return
+
+	return result;
 }
 
 function scrapeClasses(list=[], html) {
@@ -72,8 +94,17 @@ function scrapeTagName(tag, html) {
 function parse(content) {
 	const data = {};
 
-	const html = _charHtml(content),
+	const {html, info} = _charHtml(content),
 	scrape = scrapeClasses(Object.values(_toScrape), html);
+
+	// Character Info
+
+	data.name = info.name.content;
+	data.title = info.title.content;
+	
+	const world = info.world.content.split(">").pop().match(/(.*) \((.*)\)/);
+	data.world = world[1];
+	data.datacenter = world[2];
 
 	// Profile
 

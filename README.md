@@ -3,7 +3,7 @@ Though this module is now in a working state, it is still incomplete.
 
 # Progress
 - [x] HTML parsing
-- [ ] Character name and world
+- [x] Character name, title and world
 - [ ] Character portrait
 - [x] Character race, clan and gender
 - [ ] Equipped items

@@ -31,6 +31,8 @@ function _recurse(elements, content) {
 function parseHtml(content) {
 	// Parse text
 
+	content = content.replace(/&#([0-9]{1,});/g, (_,c)=>String.fromCharCode(c)).replace(/&nbsp;/g, " ");
+
 	let _elements = [];
 
 	let exec, propExec;
