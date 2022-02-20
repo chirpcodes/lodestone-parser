@@ -7,15 +7,15 @@ const _noClose = ["input", "img"];
 
 // Parse HTMl elements into JSON
 
-function _recurse(elements, content, _fallback) {
-	const first = elements.splice(0, 1)[0];
+function _recurse(elements, content) {
+	const first = elements.pop();
 	if (!first) return null;
 
 	while (elements.length > 0) {
-		const next = elements[0];
+		const next = elements[elements.length-1];
 
 		if (next.tag == `/${first.tag}`) {
-			elements.splice(0, 1);
+			elements.pop();
 			first.content = content.slice(first._end, next._index);
 			break;
 		}
@@ -31,7 +31,7 @@ function _recurse(elements, content, _fallback) {
 function parseHtml(content) {
 	// Parse text
 
-	const _elements = [];
+	let _elements = [];
 
 	let exec, propExec;
 	while ((exec = tagRegex.exec(content)) !== null) {
@@ -72,12 +72,14 @@ function parseHtml(content) {
 		}
 	}
 
+	_elements = _elements.reverse();
+
 	// Result
 
 	const result = [];
 
 	while (_elements.length > 0) {
-		const element = _recurse(_elements, content, null);
+		const element = _recurse(_elements, content);
 		if (element != null)
 			result.push(element);
 	}
