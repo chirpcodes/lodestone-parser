@@ -5,7 +5,8 @@ const {parseHtml} = require("./html");
 const _toScrape = {
 	infoBox: "character-block",
 	infoBoxBlock: "character-block__box",
-	fcCrest: "character__freecompany__crest__image"
+	fcCrest: "character__freecompany__crest__image",
+	charLevels: "character__level__list"
 };
 
 // Parse HTML
@@ -35,6 +36,21 @@ function scrapeClasses(list=[], html) {
 			for (const className of obj.classes)
 				if (list.includes(className))
 					res[className].push(obj);
+			_recurse(obj.children);
+		}
+	}
+
+	_recurse(html);
+
+	return res;
+}
+function scrapeTagName(tag, html) {
+	const res = [];
+
+	function _recurse(iter) {
+		for (const obj of iter) {
+			if (obj.tag == tag)
+				res.push(obj);
 			_recurse(obj.children);
 		}
 	}
@@ -107,6 +123,13 @@ function parse(content) {
 			if (key !== null)
 				data[key] = value;
 		}
+	}
+
+	// Job Levels
+
+	console.log(scrape[_toScrape.charLevels]);
+	for (const charLevels of scrapeTagName("li", scrape[_toScrape.charLevels])) {
+		console.log(charLevels[0]);
 	}
 
 	// Return

@@ -7,18 +7,16 @@ const _noClose = ["input", "img"];
 
 // Parse HTMl elements into JSON
 
+let __i = 0;
+
 function _recurse(elements, _fallback, _content = "") {
 	const first = elements.splice(0, 1)[0];
 	
-	let close = false;
-	if (first) {
-		close = first.tagRaw.startsWith("</");
-		if (_fallback) {
-			_fallback.content = _content.slice(_fallback._end, first._index);
-		}
+	let close = first && first.tag.startsWith("/");
+	if (close && _fallback) {
+		_fallback.content = _content.slice(_fallback._end, first._index);
 	}
-
-	if (!first || close || _noClose.includes(first.tag))
+	if (!first || first.tag.startsWith("/"))
 		return _fallback || null;
 
 	while (elements.length > 0) {
@@ -52,7 +50,8 @@ function parseHtml(content) {
 				value = propExec[2];
 			properties[key] = value;
 		}
-		const classes = properties.class ? properties.class.split(" ") : [];
+		const classes = properties.class ? properties.class.split(" ") : [],
+			_end = exec.index + tagRaw.length;
 
 		_elements.push(Object.assign({
 			tag,
@@ -60,18 +59,18 @@ function parseHtml(content) {
 			content: null,
 			children: [],
 			_index: exec.index,
-			_end: exec.index + tagRaw.length,
+			_end,
 			classes
 		}, properties));
 
 		if (_noClose.includes(tag)) {
 			_elements.push({
-				tag: tag,
+				tag: `/${tag}`,
 				tagRaw: `</${tag}>`,
 				children: [],
 				classes: [],
-				_index: exec.index,
-				_end: 0
+				_index: _end,
+				_end
 			});
 		}
 	}
