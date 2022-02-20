@@ -19,10 +19,7 @@ function _charHtml(content) {
 		const line = split[index];
 		if (found) {
 			if (line.startsWith("<div")) {
-				const _start = Date.now();
-				const parse = parseHtml(line);
-				console.log(`Parsed in ${Date.now()-_start}ms`);
-				return parse;
+				return parseHtml(line);
 			}
 		} else if (line.includes("character__content selected")) {
 			found = true;
