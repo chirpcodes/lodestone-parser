@@ -3,9 +3,13 @@
 const {parseHtml} = require("./html");
 
 const _toScrape = {
+	// Character Info
 	infoBox: "character-block",
 	infoBoxBlock: "character-block__box",
+	// Free Company
+	fcName: "character__freecompany__name",
 	fcCrest: "character__freecompany__crest__image",
+	// Jobs
 	charLevels: "character__level__list"
 };
 
@@ -16,9 +20,10 @@ function _charHtml(content) {
 
 	let found = false;
 	for (const index in split) {
-		const line = split[index];
+		let line = split[index];
 		if (found) {
 			if (line.startsWith("<div")) {
+				line = line.replace(/&#([0-9]{1,});/g, (_,c)=>String.fromCharCode(c));
 				return parseHtml(line);
 			}
 		} else if (line.includes("character__content selected")) {
@@ -45,6 +50,7 @@ function scrapeClasses(list=[], html) {
 
 	return res;
 }
+
 function scrapeTagName(tag, html) {
 	const res = [];
 
@@ -79,8 +85,10 @@ function parse(content) {
 		for (let i = 0; i<values.length; i+=2) {
 			let key = values[i].content.toLowerCase().replace(/[\s-]/g, "_"),
 				value = values[i+1];
+			if (value.tag == "h4")
+				value = value.children.shift();
 
-			console.log(key);
+			//console.log(key);
 			
 			if (key == "grand_company") {
 				const values = value.content.split(" / ");
@@ -113,7 +121,29 @@ function parse(content) {
 		}
 	}
 
-	// TODO: Free Company
+	// Free Company
+
+	const fcName = scrape[_toScrape.fcName].shift();
+	if (fcName) {
+		let crest = null;
+
+		let crestImgs = scrape[_toScrape.fcCrest].shift();
+		if (crestImgs) {
+			const imgs = crestImgs.children.map(_=>_.src);
+			crest = {
+				background: imgs[0],
+				border: imgs[1],
+				icon: imgs[2]
+			};
+		}
+
+		const anchor = fcName.children[1].children[0];
+		data['free_company'] = {
+			name: anchor.content,
+			id: anchor.href.split("/")[3],
+			crest
+		};
+	}
 
 	// Job Levels
 
