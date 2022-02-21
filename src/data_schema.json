@@ -16,6 +16,7 @@
 			"charParams": "character__param",
 			"charAttrs": "character__param__list",
 			"charItems": "ic_reflection_box",
+			"charBio": "character__selfintroduction",
 			"iAttrPrefix": "db-tooltip__"
 		}
 	},

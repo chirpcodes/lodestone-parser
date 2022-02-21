@@ -150,6 +150,9 @@ function parse(content) {
 		}
 	}
 
+	let bio = scrape[_toScrape.charBio][0];
+	data.bio = bio ? bio.content : null;
+
 	// Free Company
 
 	const fcName = scrape[_toScrape.fcName][0];
