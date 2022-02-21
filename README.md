@@ -9,6 +9,9 @@ Though this module is now in a working state, it is still incomplete.
 - [x] Character attributes
 - [x] Current job
 - [x] Equipped items
+	- [x] Materia
+	- [x] Basic attributes
+	- [ ] Special attributes
 - [x] Profile bio
 - [x] Citystate
 - [x] Guardian
