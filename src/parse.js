@@ -196,17 +196,23 @@ function parse(content) {
 				data.jobs.push(obj);
 			}
 		}
-		//console.log(jobs);
 	}
 
-	//console.log(scrape[_toScrape.charLevels]);
-	//for (const charLevels of scrapeTagName("li", scrape[_toScrape.charLevels])) {
-		//console.log(charLevels[0]);
-	//}
+	// Items
+
+	data.items = [];
+	/*for (const div of [
+		//...scrape[_toScrape.charMainHand],
+		...scrape[_toScrape.charItems]
+	]) {
+		console.log(div);
+	}*/
+
+	//console.log(data);
 
 	// Return
 
-	console.log(data);
+	//console.log(data);
 
 	return html;
 }

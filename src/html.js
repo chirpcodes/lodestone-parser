@@ -3,7 +3,7 @@
 const tagRegex = /<(.*?)>/g,
 	propRegex = /([-A-z]*?)="(.*?)"/g;
 
-const _noClose = ["input", "img"];
+const _noClose = ["input", "img", "hr"];
 
 // Parse HTMl elements into JSON
 

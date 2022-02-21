@@ -10,7 +10,9 @@
 			"infoBoxBlock": "character-block__box",
 			"fcName": "character__freecompany__name",
 			"fcCrest": "character__freecompany__crest__image",
-			"charLevels": "character__level__list"
+			"charLevels": "character__level__list",
+			"charItems": "character__detail__icon",
+			"charMainHand": "character__class__arms"
 		}
 	},
 	"chara": {
