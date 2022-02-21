@@ -1,6 +1,6 @@
 {
 	"name": "lodestone-parser",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Parser for character profiles from lodestone.",
 	"author": "chirp (https://github.com/chrpy)",
 	"url": "https://github.com/chrpy/lodestone-parser",

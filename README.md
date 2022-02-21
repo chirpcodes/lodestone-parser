@@ -13,4 +13,4 @@ Though this module is now in a working state, it is still incomplete.
 - [x] Guardian
 - [x] Grand Company
 - [x] Free Company name, id and crest images
-- [ ] Job levels
+- [x] Job levels
