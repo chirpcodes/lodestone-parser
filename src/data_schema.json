@@ -11,14 +11,13 @@
 			"fcName": "character__freecompany__name",
 			"fcCrest": "character__freecompany__crest__image",
 			"charLevels": "character__level__list",
-			"charItems": "character__detail__icon",
-			"charMainHand": "character__class__arms"
+			"charItems": "ic_reflection_box"
 		}
 	},
 	"chara": {
 		"item_slots": [
-			"Main Hand",
-			"Off-Hand",
+			"MainHand",
+			"OffHand",
 			"Head",
 			"Body",
 			"Hands",
@@ -28,9 +27,9 @@
 			"Earrings",
 			"Necklace",
 			"Bracelets",
-			"Left Ring",
-			"Right Ring",
-			"Job Stone"
+			"Ring1",
+			"Ring2",
+			"SoulCrystal"
 		],
 		"base_classes": [
 			"Gladiator",

@@ -200,15 +200,20 @@ function parse(content) {
 
 	// Items
 
-	data.items = [];
-	/*for (const div of [
-		//...scrape[_toScrape.charMainHand],
-		...scrape[_toScrape.charItems]
-	]) {
-		console.log(div);
-	}*/
+	data.gear = {};
+	for (const div of scrape[_toScrape.charItems]) {
+		const slotName = schema.chara.item_slots[div.classes[0].split("-").pop()];
+		//console.log(slotName);
 
-	//console.log(data);
+		let item = null;
+
+		for (const slot of div.children) {
+		}
+
+		data.gear[slotName] = item;
+	}
+
+	//console.log(data.gear);
 
 	// Return
 
