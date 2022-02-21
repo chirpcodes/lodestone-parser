@@ -1,0 +1,46 @@
+{
+	"scrape": {
+		"chara": [
+			"name",
+			"title",
+			"world"
+		],
+		"classes": {
+			"infoBox": "character-block",
+			"infoBoxBlock": "character-block__box",
+			"fcName": "character__freecompany__name",
+			"fcCrest": "character__freecompany__crest__image",
+			"charLevels": "character__level__list"
+		}
+	},
+	"chara": {
+		"item_slots": [
+			"Main Hand",
+			"Off-Hand",
+			"Head",
+			"Body",
+			"Hands",
+			"Belt",
+			"Legs",
+			"Feet",
+			"Earrings",
+			"Necklace",
+			"Bracelets",
+			"Left Ring",
+			"Right Ring",
+			"Job Stone"
+		],
+		"base_classes": [
+			"Gladiator",
+			"Marauder",
+			"Conjurer",
+			"Arcanist",
+			"Astrologian",
+			"Pugilist",
+			"Lancer",
+			"Rogue",
+			"Thaumaturge",
+			"Scholar"
+		]
+	}
+}

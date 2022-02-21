@@ -2,16 +2,8 @@
 
 const {parseHtml} = require("./html");
 
-const _toScrape = {
-	// Character Info
-	infoBox: "character-block",
-	infoBoxBlock: "character-block__box",
-	// Free Company
-	fcName: "character__freecompany__name",
-	fcCrest: "character__freecompany__crest__image",
-	// Jobs
-	charLevels: "character__level__list"
-};
+const schema = require("./data_schema.json"),
+	_toScrape = schema.scrape.classes;
 
 // Parse HTML
 
@@ -31,7 +23,7 @@ function _charHtml(content) {
 		let line = split[index];
 
 		if (extCt < 3) {
-			for (const ext of ["name", "title", "world"]) {
+			for (const ext of schema.scrape.chara) {
 				if (!result[ext] && line.includes(`chara__${ext}`)) {
 					result.info[ext] = parseHtml(line).shift();
 					extCt++;
@@ -100,7 +92,7 @@ function parse(content) {
 	// Character Info
 
 	data.name = info.name.content;
-	data.title = info.title.content;
+	data.title = info.title ? info.title.content : null;
 	
 	const world = info.world.content.split(">").pop().match(/(.*) \((.*)\)/);
 	data.world = world[1];
@@ -117,9 +109,7 @@ function parse(content) {
 			let key = values[i].content.toLowerCase().replace(/[\s-]/g, "_"),
 				value = values[i+1];
 			if (value.tag == "h4")
-				value = value.children.shift();
-
-			//console.log(key);
+				value = value.children[0];
 			
 			if (key == "grand_company") {
 				const values = value.content.split(" / ");
@@ -154,11 +144,11 @@ function parse(content) {
 
 	// Free Company
 
-	const fcName = scrape[_toScrape.fcName].shift();
+	const fcName = scrape[_toScrape.fcName][0];
 	if (fcName) {
 		let crest = null;
 
-		let crestImgs = scrape[_toScrape.fcCrest].shift();
+		let crestImgs = scrape[_toScrape.fcCrest][0];
 		if (crestImgs) {
 			const imgs = crestImgs.children.map(_=>_.src);
 			crest = {
@@ -177,6 +167,37 @@ function parse(content) {
 	}
 
 	// Job Levels
+
+	data.jobs = [];
+	for (const div of scrape[_toScrape.charLevels]) {
+		const ul = div.children[0];
+		for (const li of ul.children) {
+			const level = parseInt(li.content.split(">").pop()),
+				job = li.children[0]["data-tooltip"].split(" (")[0];
+			if (level) {
+				const obj = {};
+
+				let name = job.split(" / ");
+				if (name.length > 1 || schema.chara.base_classes.includes(name[0])) {
+					obj.name = name[0];
+					obj.class = name[1] || name[0];
+					if (job == "Scholar") { // Special case
+						obj.class = "Arcanist";
+						obj.job_spec = true;
+					} else {
+						obj.job_spec = name.length > 1;
+					}
+				} else {
+					obj.name = name[0];
+					obj.class = name[0];
+				}
+				obj.level = level;
+
+				data.jobs.push(obj);
+			}
+		}
+		//console.log(jobs);
+	}
 
 	//console.log(scrape[_toScrape.charLevels]);
 	//for (const charLevels of scrapeTagName("li", scrape[_toScrape.charLevels])) {
