@@ -7,7 +7,7 @@ Though this module is now in a working state, it is still incomplete.
 - [x] Character portrait and image
 - [x] Character race, clan and gender
 - [x] Character attributes
-- [ ] Current job
+- [x] Current job
 - [x] Equipped items
 - [x] Profile bio
 - [x] Citystate

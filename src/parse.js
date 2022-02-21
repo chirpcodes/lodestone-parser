@@ -177,56 +177,9 @@ function parse(content) {
 		};
 	}
 
-	// Job Levels
-
-	data.jobs = [];
-	for (const div of scrape[_toScrape.charLevels]) {
-		const ul = div.children[0];
-		for (const li of ul.children) {
-			const level = parseInt(li.content.split(">").pop()),
-				job = li.children[0]["data-tooltip"].split(" (")[0];
-			if (level) {
-				const obj = {};
-
-				let name = job.split(" / ");
-				if (name.length > 1 || schema.chara.base_classes.includes(name[0])) {
-					obj.name = name[0];
-					obj.class = name[1] || name[0];
-					if (job == "Scholar") { // Special case
-						obj.class = "Arcanist";
-						obj.job_spec = true;
-					} else {
-						obj.job_spec = name.length > 1;
-					}
-				} else {
-					obj.name = name[0];
-					obj.class = name[0];
-				}
-				obj.level = level;
-
-				data.jobs.push(obj);
-			}
-		}
-	}
-
-	// Attributes
-
-	data.attributes = {};
-
-	const params = scrapeTagName(scrape[_toScrape.charParams][0].children, "span");
-	data.attributes.HP = params[0].content;
-	data.attributes.MP = params[1].content;
-
-	for (const attrs of scrape[_toScrape.charAttrs]) {
-		for (const tr of attrs.children) {
-			let stat = scrapeTagName(tr.children, "span")[0].content;
-			if (stat.endsWith("Rate"))
-				stat = stat.slice(0, -5);
-			data.attributes[stat] = tr.children[1].content;
-		}
-	}
-
 	// Items
+
+	let curJob = null;
 
 	data.gear = {};
 	for (const div of scrape[_toScrape.charItems]) {
@@ -248,6 +201,9 @@ function parse(content) {
 				splitClass = eqClass.split(" ");
 			if (eqClass == eqClass.toUpperCase())
 				eqClass = splitClass;
+
+			if (slotName == "MainHand")
+				curJob = attributes.item_category.split("'")[0];
 
 			// Item Stats
 
@@ -311,6 +267,61 @@ function parse(content) {
 		}
 
 		data.gear[slotName] = item;
+	}
+
+	// Job Levels
+
+	data.jobs = [];
+	for (const div of scrape[_toScrape.charLevels]) {
+		const ul = div.children[0];
+		for (const li of ul.children) {
+			const level = parseInt(li.content.split(">").pop()),
+				job = li.children[0]["data-tooltip"].split(" (")[0];
+
+			if (level) {
+				const obj = {};
+
+				let name = job.split(" / ");
+				if (name.length > 1 || schema.chara.base_classes.includes(name[0])) {
+					obj.name = name[0];
+					obj.class = name[1] || name[0];
+					if (job == "Scholar") { // Special case
+						obj.class = "Arcanist";
+						obj.job_spec = true;
+					} else {
+						obj.job_spec = name.length > 1;
+					}
+				} else {
+					obj.name = name[0];
+					obj.class = name[0];
+				}
+				obj.level = level;
+
+				if (curJob == obj.name || curJob == obj.class) {
+					obj.current = true;
+					data.job = obj;
+				}
+
+				data.jobs.push(obj);
+			}
+		}
+	}
+
+	// Attributes
+
+	data.attributes = {};
+
+	const params = scrapeTagName(scrape[_toScrape.charParams][0].children, "span");
+	data.attributes.HP = params[0].content;
+	data.attributes.MP = params[1].content;
+
+	for (const attrs of scrape[_toScrape.charAttrs]) {
+		for (const tr of attrs.children) {
+			let stat = scrapeTagName(tr.children, "span")[0].content;
+			if (stat.endsWith("Rate"))
+				stat = stat.slice(0, -5);
+			data.attributes[stat] = tr.children[1].content;
+		}
 	}
 
 	// Return
