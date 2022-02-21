@@ -9,7 +9,7 @@ Though this module is now in a working state, it is still incomplete.
 - [x] Character attributes
 - [ ] Current job
 - [x] Equipped items
-- [ ] Profile text
+- [x] Profile bio
 - [x] Citystate
 - [x] Guardian
 - [x] Grand Company
