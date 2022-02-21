@@ -10,7 +10,11 @@
 			"infoBoxBlock": "character-block__box",
 			"fcName": "character__freecompany__name",
 			"fcCrest": "character__freecompany__crest__image",
+			"charImage": "character__detail__image",
+			"charPortrait": "character-block__face",
 			"charLevels": "character__level__list",
+			"charParams": "character__param",
+			"charAttrs": "character__param__list",
 			"charItems": "ic_reflection_box",
 			"iAttrPrefix": "db-tooltip__"
 		}

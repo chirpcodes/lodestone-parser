@@ -101,6 +101,11 @@ function parse(content) {
 	data.world = world[1];
 	data.datacenter = world[2];
 
+	// Images
+
+	data.portrait = scrape[_toScrape.charPortrait][0].src;
+	data.image = scrapeTagName(scrape[_toScrape.charImage], "img")[0].src;
+
 	// Profile
 
 	for (const infoBox of scrape[_toScrape.infoBoxBlock]) {
@@ -198,6 +203,23 @@ function parse(content) {
 
 				data.jobs.push(obj);
 			}
+		}
+	}
+
+	// Attributes
+
+	data.attributes = {};
+
+	const params = scrapeTagName(scrape[_toScrape.charParams][0].children, "span");
+	data.attributes.HP = params[0].content;
+	data.attributes.MP = params[1].content;
+
+	for (const attrs of scrape[_toScrape.charAttrs]) {
+		for (const tr of attrs.children) {
+			let stat = scrapeTagName(tr.children, "span")[0].content;
+			if (stat.endsWith("Rate"))
+				stat = stat.slice(0, -5);
+			data.attributes[stat] = tr.children[1].content;
 		}
 	}
 

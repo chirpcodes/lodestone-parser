@@ -4,15 +4,17 @@ Though this module is now in a working state, it is still incomplete.
 # Progress
 - [x] HTML parsing
 - [x] Character name, title and world
-- [ ] Character portrait
+- [x] Character portrait and image
 - [x] Character race, clan and gender
-- [ ] Character attributes
+- [x] Character attributes
 - [ ] Current job
 - [x] Equipped items
-- [ ] Minions and mounts
 - [ ] Profile text
 - [x] Citystate
 - [x] Guardian
 - [x] Grand Company
 - [x] Free Company name, id and crest images
 - [x] Job levels
+- [ ] Eureka/Bozja Levels
+- [ ] Minions
+- [ ] Mounts
