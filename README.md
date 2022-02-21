@@ -6,7 +6,9 @@ Though this module is now in a working state, it is still incomplete.
 - [x] Character name, title and world
 - [ ] Character portrait
 - [x] Character race, clan and gender
-- [ ] Equipped items
+- [ ] Character attributes
+- [ ] Current job
+- [x] Equipped items
 - [ ] Minions and mounts
 - [ ] Profile text
 - [x] Citystate

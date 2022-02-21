@@ -11,7 +11,8 @@
 			"fcName": "character__freecompany__name",
 			"fcCrest": "character__freecompany__crest__image",
 			"charLevels": "character__level__list",
-			"charItems": "ic_reflection_box"
+			"charItems": "ic_reflection_box",
+			"iAttrPrefix": "db-tooltip__"
 		}
 	},
 	"chara": {

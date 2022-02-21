@@ -2,8 +2,7 @@
 
 const {parseHtml} = require("./html");
 
-const schema = require("./data_schema.json"),
-	_toScrape = schema.scrape.classes;
+const schema = require("./data_schema.json");
 
 // Parse HTML
 
@@ -46,31 +45,12 @@ function _charHtml(content) {
 	return result;
 }
 
-function scrapeClasses(list=[], html) {
-	const res = {};
-	for (const className of list)
-		res[className] = [];
-
-	function _recurse(iter) {
-		for (const obj of iter) {
-			for (const className of obj.classes)
-				if (list.includes(className))
-					res[className].push(obj);
-			_recurse(obj.children);
-		}
-	}
-
-	_recurse(html);
-
-	return res;
-}
-
-function scrapeTagName(tag, html) {
+function _filterElements(html, cb=()=>{}) {
 	const res = [];
 
 	function _recurse(iter) {
 		for (const obj of iter) {
-			if (obj.tag == tag)
+			if (cb(obj))
 				res.push(obj);
 			_recurse(obj.children);
 		}
@@ -81,13 +61,36 @@ function scrapeTagName(tag, html) {
 	return res;
 }
 
+function scrapeClasses(html, list=[]) {
+	const res = {};
+	for (const className of list)
+		res[className] = _filterElements(html, e=>e.classes.includes(className));
+	return res;
+}
+function scrapeClassPrefix(html, pre) {
+	return _filterElements(html, e=>e.classes.length&&e.classes.find(t=>t.startsWith(pre)));
+}
+function scrapeTagName(html, tag) {
+	return _filterElements(html, e=>e.tag==tag);
+}
+
 // Parse character
 
 function parse(content) {
+	const _toScrape = schema.scrape.classes;
+
+	const _rStat = /(.*) \+(.*)/;
+		_rStatEmbed = /<span>(.*)<\/span> \+(.*)/,
+		_rFormatKey = /[\s-]/g,
+		_rFormatAttr = /__/g,
+		_rBreak = /<br \/>/g;
+
+	// Start Parse
+
 	const data = {};
 
 	const {html, info} = _charHtml(content),
-	scrape = scrapeClasses(Object.values(_toScrape), html);
+	scrape = scrapeClasses(html, Object.values(_toScrape));
 
 	// Character Info
 
@@ -106,7 +109,7 @@ function parse(content) {
 			continue;
 		
 		for (let i = 0; i<values.length; i+=2) {
-			let key = values[i].content.toLowerCase().replace(/[\s-]/g, "_"),
+			let key = values[i].content.toLowerCase().replace(_rFormatKey, "_"),
 				value = values[i+1];
 			if (value.tag == "h4")
 				value = value.children[0];
@@ -118,7 +121,7 @@ function parse(content) {
 					rank: values[1]
 				};
 			} else if (value.content) {
-				value = value.content.replace(/<br \/>/g, " / ");
+				value = value.content.replace(_rBreak, " / ");
 
 				if (key.includes("/")) {
 					const keys = key.split("/"),
@@ -203,21 +206,89 @@ function parse(content) {
 	data.gear = {};
 	for (const div of scrape[_toScrape.charItems]) {
 		const slotName = schema.chara.item_slots[div.classes[0].split("-").pop()];
-		//console.log(slotName);
 
 		let item = null;
+		if (div.children.length > 0) {
+			const elements = scrapeClassPrefix(div.children, _toScrape.iAttrPrefix),
+				attributes = {};
 
-		for (const slot of div.children) {
+			for (const e of elements) {
+				const attr = e.class.split(_toScrape.iAttrPrefix)[1].split(" ")[0].replace(_rFormatAttr, "_");
+				attributes[attr] = e.children.length > 0 ? e : e.content;
+			}
+			
+			// Equippable Class
+
+			let eqClass = attributes.item_equipment_class,
+				splitClass = eqClass.split(" ");
+			if (eqClass == eqClass.toUpperCase())
+				eqClass = splitClass;
+
+			// Item Stats
+
+			let stats = null;
+			if (attributes.basic_bonus) {
+				stats = {};
+				for (const bonus of attributes.basic_bonus.children) {
+					const match = bonus.content.match(_rStatEmbed);
+					if (match)
+						stats[match[1]] = match[2];
+				}
+			}
+
+			// Item Materia
+
+			let materia = null;
+			if (attributes.materia) {
+				materia = [];
+
+				if (!attributes.materia_forbidden);
+					attributes.materia_forbidden = {children:[]};
+				for (const slot of [
+					...attributes.materia.children,
+					...attributes.materia_forbidden.children
+				]) {
+					const overmeld = slot.class.includes("materia__forbidden"),
+						mItem = slot.children[1];
+
+					if (!mItem) {
+						materia.push(null);
+						continue;
+					}
+
+					const match = mItem.children[0].content.match(_rStat);
+					if (!match) continue;
+
+					materia.push({
+						name: mItem.content.split("<br")[0],
+						attribute: [match[1], parseInt(match[2])],
+						overmeld
+					});
+				}
+			}
+
+			// Item Object
+			
+			item = {
+				name: attributes.item_name,
+				category: attributes.item_category,
+				class: eqClass,
+				level: parseInt(attributes.item_equipment_level.split(" ").pop()),
+				item_level: parseInt(attributes.item_level.split(" ").pop()),
+				attributes: stats,
+				properties: {
+					sellable: !attributes.unsellable,
+					market_sellable: !attributes.market_notsell,
+					advanced_melding: materia > 0 && !attributes.cannot_materia_prohibition
+				},
+				materia
+			};
 		}
 
 		data.gear[slotName] = item;
 	}
 
-	//console.log(data.gear);
-
 	// Return
-
-	//console.log(data);
 
 	return html;
 }
