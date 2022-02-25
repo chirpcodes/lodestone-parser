@@ -326,7 +326,7 @@ function parse(content) {
 
 	// Return
 
-	return html;
+	return data;
 }
 
 // Export

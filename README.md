@@ -12,6 +12,9 @@ Though this module is now in a working state, it is still incomplete.
 	- [x] Materia
 	- [x] Basic attributes
 	- [ ] Special attributes
+	- [ ] Additional attributes
+	- [ ] Defense stats
+	- [ ] Glamour
 - [x] Profile bio
 - [x] Citystate
 - [x] Guardian
